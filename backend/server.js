@@ -29,6 +29,20 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
+app.delete("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({ status: true, message: "Product Deleted" });
+  } catch (error) {
+    console.log("Error in Product deletion:", error.message);
+    res
+      .status(404)
+      .json({ status: false, message: "Product Not Deleted. Error" });
+  }
+});
+
 // console.log(process.env.MONGO_URI);
 
 app.listen(5000, () => {
