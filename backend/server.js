@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import Product from "./models/product.model.js";
+import mongoose from "mongoose";
 dotenv.config();
 const app = express();
 
@@ -37,6 +38,25 @@ app.post("/api/products", async (req, res) => {
     res.status(201).json({ status: true, data: newProduct });
   } catch (error) {
     console.log("Error in creating product", error.message);
+    res.status(500).json({ status: false, message: "Server error" });
+  }
+});
+
+app.put("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const product = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(404).json({ status: false, message: "Update Id is Not Valid" });
+  }
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(id, product, {
+      new: true,
+    });
+    res.status(200).json({ status: true, data: updatedProduct });
+  } catch (error) {
+    console.log("Error in Updating product", error.message);
     res.status(500).json({ status: false, message: "Server error" });
   }
 });
