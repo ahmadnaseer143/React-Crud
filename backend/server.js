@@ -11,6 +11,18 @@ app.get("/", (req, res) => {
   res.send("Server is ready ");
 });
 
+app.get("/api/products", async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.status(200).json({ status: true, data: products });
+  } catch (error) {
+    console.log("Error in fetching products", error.message);
+    res
+      .status(500)
+      .json({ status: false, message: "Error in fetching products" });
+  }
+});
+
 app.post("/api/products", async (req, res) => {
   const product = req.body; // user send the data of product in req.body
   if (!product.name || !product.price || !product.image) {
