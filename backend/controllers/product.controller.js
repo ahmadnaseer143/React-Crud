@@ -7,9 +7,7 @@ export const getProducts = async (req, res) => {
     res.status(200).json({ status: true, data: products });
   } catch (error) {
     console.log("Error in fetching products", error.message);
-    res
-      .status(500)
-      .json({ status: false, message: "Error in fetching products" });
+    res.status(500).json({ status: false, message: "Server Error" });
   }
 };
 
@@ -53,13 +51,15 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(404).json({ status: false, message: "Delete Id is Not Valid" });
+  }
+
   try {
     await Product.findByIdAndDelete(id);
     res.status(200).json({ status: true, message: "Product Deleted" });
   } catch (error) {
     console.log("Error in Product deletion:", error.message);
-    res
-      .status(404)
-      .json({ status: false, message: "Product Not Deleted. Error" });
+    res.status(500).json({ status: false, message: "Server Error" });
   }
 };
